@@ -68,6 +68,10 @@ def post_to_slack(webhook_url: str, text: str) -> None:
 
 
 def main() -> int:
+    if os.environ.get("DRYRUN") == "1":
+        print("[DRYRUN] Slack投稿をスキップしました")
+        return 0
+
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
 
