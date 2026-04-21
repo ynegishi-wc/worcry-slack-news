@@ -50,7 +50,12 @@ def generate_news(api_key: str) -> str:
         messages=[{"role": "user", "content": build_prompt()}],
     )
     parts = [block.text for block in response.content if block.type == "text"]
-    return "".join(parts).strip()
+    text = "".join(parts).strip()
+    marker = "就活ニュース｜"
+    idx = text.find(marker)
+    if idx != -1:
+        text = text[idx:]
+    return text.strip()
 
 
 def post_to_slack(webhook_url: str, text: str) -> None:
