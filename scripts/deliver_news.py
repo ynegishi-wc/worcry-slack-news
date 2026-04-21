@@ -2,7 +2,7 @@
 
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import anthropic
@@ -17,8 +17,8 @@ def build_prompt() -> str:
     now = datetime.now(ZoneInfo("Asia/Tokyo"))
     today = f"{now.year}年{now.month}月{now.day}日({weekday_jp[now.weekday()]})"
     return (
-        f"Web検索を使って、直近3日以内の日本の就職・採用・長期インターン関連ニュースを1件選び、\n"
-        f"以下のフォーマットで厳密に出力してください。\n"
+        f"Web検索を使って、直近の平日（土日を除く直近3営業日）に配信された日本の就職・採用・長期インターン関連ニュースを\n"
+        f"1件選び、以下のフォーマットで厳密に出力してください。\n"
         f"\n"
         f"---フォーマット---\n"
         f"就活ニュース｜{today}\n"
@@ -90,6 +90,12 @@ def main() -> int:
     if not news_text:
         print("エラー: ニュース本文が生成されませんでした。", file=sys.stderr)
         return 1
+
+    if not news_text.startswith("就活ニュース｜"):
+        print("投稿スキップ：フォーマット外の出力のため")
+        print("---")
+        print(news_text)
+        return 0
 
     post_to_slack(webhook_url, news_text)
     print("Slackへの投稿が完了しました。")
