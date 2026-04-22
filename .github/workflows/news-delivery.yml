@@ -1,9 +1,6 @@
 name: Daily News Delivery
 
 on:
-  schedule:
-    # 日本時間 月〜金 毎朝8時 (UTC 前日23:00 = 日〜木)
-    - cron: "0 23 * * 0-4"
   workflow_dispatch:
 
 jobs:
